@@ -1,0 +1,13 @@
+{
+
+    "global": {
+
+    },
+    "auth":{
+        "title": "",
+        "sub_title": "",
+        "username": ""
+    },
+    "language": "Language",
+    "hello": "hello world!"
+  }
