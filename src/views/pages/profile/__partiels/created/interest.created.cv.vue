@@ -1,24 +1,16 @@
 <template>
-  <section
-    class="flex flex-col lg:p-4 lg:w-11/12 w-full m-auto gap-4"
-    v-if="toAccess == 6"
-  >
+  <section class="flex flex-col lg:p-4 lg:w-11/12 w-full m-auto gap-4" v-if="toAccess == 6">
     <div class="flex bg-gray-50 p-2 opacity-90 uppercase justify-between">
       <span class="text-base font-bold">Vos centres d'intérêt</span>
-      <LockOpenIcon
-        class="w-6 h-6"
-      />
+      <LockOpenIcon class="w-6 h-6" />
       <LockClosedIcon
         class="w-6 h-6"
-        v-if="$route.params.id && !$route.params.id.includes('prenium')"
+        v-if="route.params.id && !route.params.id.includes('prenium')"
       />
     </div>
 
     <!-- Data -->
-    <div
-      class="flex flex-col gap-4 lg:px-8 px-4"
-     
-    >
+    <div class="flex flex-col gap-4 lg:px-8 px-4">
       <div class="flex flex-col w-full">
         <label for="id-title" class="text-sm font-semibold">Centre d'intêret </label>
 
@@ -36,59 +28,30 @@
   </section>
 </template>
 
-<script lang="ts">
-const OnlyInput = defineAsyncComponent(
-  () => import("@/components/forms/onlyInput.vue")
-);
-const HomeTwoLayout = defineAsyncComponent(
-  () => import("@/layouts/HomeTwoLayout.vue")
-);
-import {
-  defineComponent,
-  onMounted,
-  reactive,
-  ref,
-  defineAsyncComponent,
-} from "vue";
+<script setup lang="ts">
+const OnlyInput = defineAsyncComponent(() => import('@/components/forms/onlyInput.vue'))
+const HomeTwoLayout = defineAsyncComponent(() => import('@/layouts/HomeTwoLayout.vue'))
+import { defineComponent, onMounted, reactive, ref, defineAsyncComponent } from 'vue'
 
-const formSelect = defineAsyncComponent(
-  () => import("@/components/forms/form.select.vue")
-);
-const formDate = defineAsyncComponent(
-  () => import("@/components/forms/form.date.vue")
-);
+const formSelect = defineAsyncComponent(() => import('@/components/forms/form.select.vue'))
+const formDate = defineAsyncComponent(() => import('@/components/forms/form.date.vue'))
 
-const CvIndex = defineAsyncComponent(() => import("@/CV/cv.index.vue"));
-import { usePreferenceComposition } from "@/composables/preference.composition";
-import VueSelect from "vue-select";
-import BtnRemove from "@/components/buttons/btn.remove.vue";
-import BtnAdd from "@/components/buttons/btn.add.vue";
-import AvatarIcon from "@/components/avatar/avatarIcon.vue";
+const CvIndex = defineAsyncComponent(() => import('@/CV/cv.index.vue'))
+import { usePreferenceComposition } from '@/composables/preference.composition'
+import VueSelect from 'vue-select'
+import BtnRemove from '@/components/buttons/btn.remove.vue'
+import BtnAdd from '@/components/buttons/btn.add.vue'
+import AvatarIcon from '@/components/avatar/avatarIcon.vue'
+import { useRoute } from 'vue-router'
 
-export default defineComponent({
-  name: "",
-  components: {
-    HomeTwoLayout,
-    OnlyInput,
-    formSelect,
-    formDate,
-    CvIndex,
-    VueSelect,
-    BtnRemove,
-    BtnAdd,
-  },
-  props: ["toAccess", "CV_Data", "removeData", "AddNewData"],
-  setup(props) {
-    const { preferenceData, getAllParameter } = usePreferenceComposition();
-    onMounted(() => {
-      getAllParameter();
-    });
+defineProps(['toAccess', 'CV_Data', 'removeData', 'AddNewData'])
 
-    return {
-      preferenceData,
-    };
-  },
-});
+const route = useRoute()
+
+const { preferenceData, getAllParameter } = usePreferenceComposition()
+onMounted(() => {
+  getAllParameter()
+})
 </script>
 
 <style scoped>

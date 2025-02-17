@@ -1,0 +1,1 @@
+import o from"./chooseYourPreference-DNWwzBXr.js";import{d as r,f as n,g as s,h as t,r as c}from"./index-D5ohQRTx.js";import"./card.to.choose-CJmTACrH.js";const p=r({name:"",props:{},components:{ChooseYourPreference:o}});function a(f,_,m,i,u,d){const e=c("ChooseYourPreference");return t(),s(e)}const $=n(p,[["render",a]]);export{$ as default};

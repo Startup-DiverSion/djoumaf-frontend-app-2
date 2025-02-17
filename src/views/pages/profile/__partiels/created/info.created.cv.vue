@@ -1,9 +1,6 @@
 <template>
   <!-- Basic -->
-  <section
-    class="flex flex-col lg:p-4 lg:w-11/12 w-full m-auto"
-    v-if="toAccess == 0"
-  >
+  <section class="flex flex-col lg:p-4 lg:w-11/12 w-full m-auto" v-if="toAccess == 0">
     <div class="flex bg-gray-50 p-2 opacity-90 uppercase">
       <span class="text-base font-bold">Mes info basic</span>
     </div>
@@ -110,69 +107,32 @@
             @update:modelValue="CV_BasicInfo.about = $event.target.value"
           />
         </div>
-
-        
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-const OnlyInput = defineAsyncComponent(
-  () => import("@/components/forms/onlyInput.vue")
-);
-const HomeTwoLayout = defineAsyncComponent(
-  () => import("@/layouts/HomeTwoLayout.vue")
-);
-import {
-  defineComponent,
-  onMounted,
-  reactive,
-  ref,
-  defineAsyncComponent,
-} from "vue";
+<script setup lang="ts">
+const OnlyInput = defineAsyncComponent(() => import('@/components/forms/onlyInput.vue'))
+const HomeTwoLayout = defineAsyncComponent(() => import('@/layouts/HomeTwoLayout.vue'))
+import { defineComponent, onMounted, reactive, ref, defineAsyncComponent } from 'vue'
 
-const formSelect = defineAsyncComponent(
-  () => import("@/components/forms/form.select.vue")
-);
-const formDate = defineAsyncComponent(
-  () => import("@/components/forms/form.date.vue")
-);
+const formSelect = defineAsyncComponent(() => import('@/components/forms/form.select.vue'))
+const formDate = defineAsyncComponent(() => import('@/components/forms/form.date.vue'))
 
+const CvIndex = defineAsyncComponent(() => import('@/CV/cv.index.vue'))
+import { usePreferenceComposition } from '@/composables/preference.composition'
+import VueSelect from 'vue-select'
+import BtnRemove from '@/components/buttons/btn.remove.vue'
+import BtnAdd from '@/components/buttons/btn.add.vue'
+import AvatarIcon from '@/components/avatar/avatarIcon.vue'
 
-const CvIndex = defineAsyncComponent(() => import("@/CV/cv.index.vue"));
-import { usePreferenceComposition } from "@/composables/preference.composition";
-import VueSelect from "vue-select";
-import BtnRemove from "@/components/buttons/btn.remove.vue";
-import BtnAdd from "@/components/buttons/btn.add.vue";
-import AvatarIcon from "@/components/avatar/avatarIcon.vue";
+const props = defineProps(['toAccess', 'CV_BasicInfo', 'uploadImage'])
 
-export default defineComponent({
-  name: "",
-  components: {
-    HomeTwoLayout,
-    OnlyInput,
-    formSelect,
-    formDate,
-    CvIndex,
-    VueSelect,
-    BtnRemove,
-    BtnAdd
-  },
-  props: ["toAccess", "CV_BasicInfo", 'uploadImage'],
-  setup(props) {
-    const { preferenceData, getAllParameter } = usePreferenceComposition();
-    onMounted(() => {
-      getAllParameter();
-    });
-
-   
-
-    return {
-      preferenceData
-    };
-  },
-});
+const { preferenceData, getAllParameter } = usePreferenceComposition()
+onMounted(() => {
+  getAllParameter()
+})
 </script>
 
 <style scoped>

@@ -1,0 +1,1 @@
+import{d as e,f as t,h as o,l as n}from"./index-D5ohQRTx.js";const s=e({name:"btn-more",props:[],setup(){return{}}}),r={class:"text-blue-500 font-bold font-love"};function c(a,p,_,f,l,u){return o(),n("button",r,"Voir plus →")}const m=t(s,[["render",c]]);export{m as default};

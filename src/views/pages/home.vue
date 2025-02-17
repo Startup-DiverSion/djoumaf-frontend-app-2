@@ -242,7 +242,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/navigation'
-import { Navigation } from 'swiper'
+import { Navigation } from 'swiper/modules'
 import CardPost from '@/components/cards/cardPost.vue'
 import CardPostSimple from '@/components/cards/card.post.simple.vue'
 import CardText from '@/components/cards/card.text.vue'

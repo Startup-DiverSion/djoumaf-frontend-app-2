@@ -87,186 +87,129 @@
       :modelValue="preferenceData_carrier"
       :isError="isError"
       :isSearch="false"
-      
     />
   </div>
 </template>
 
-<script lang="ts">
-const BtnNext = defineAsyncComponent(
-  () => import("@/components/buttons/btn.next.vue")
-);
-import CardToChoose from "@/components/cards/card.to.choose.vue";
-const CardMedia = defineAsyncComponent(
-  () => import("@/components/cards/medias/card.media.vue")
-);
-import VueSelect from "vue-select";
-import {
-  defineComponent,
-  reactive,
-  onMounted,
-  ref,
-  computed,
-  defineAsyncComponent,
-} from "vue";
-import ModalStep from "@/components/modals/modal.step.vue";
-import { usePreferenceComposition } from "@/composables/preference.composition";
-import { useProfileComposition } from "@/composables/profile.composition";
-import { useProfileStore } from "@/stores/profile.store";
+<script setup lang="ts">
+const BtnNext = defineAsyncComponent(() => import('@/components/buttons/btn.next.vue'))
+import CardToChoose from '@/components/cards/card.to.choose.vue'
+const CardMedia = defineAsyncComponent(() => import('@/components/cards/medias/card.media.vue'))
+import VueSelect from 'vue-select'
+import { defineComponent, reactive, onMounted, ref, computed, defineAsyncComponent } from 'vue'
+import ModalStep from '@/components/modals/modal.step.vue'
+import { usePreferenceComposition } from '@/composables/preference.composition'
+import { useProfileComposition } from '@/composables/profile.composition'
+import { useProfileStore } from '@/stores/profile.store'
 
-export default defineComponent({
-  name: "choose-your-preference",
-  props: ["isError"],
-  components: { BtnNext, CardToChoose, CardMedia, ModalStep, VueSelect },
-  setup() {
-    const {
-      getAllParameter,
-      preferenceData,
-      userType,
-      checkedNames,
-      __userType,
-    } = usePreferenceComposition();
+defineProps(['isError'])
 
-    onMounted(async () => {
-      await getAllParameter();
-      userType();
-    });
+const { getAllParameter, preferenceData, userType, checkedNames, __userType } =
+  usePreferenceComposition()
 
-    const MORE_USER = reactive([
-      {
-        id: 2001,
-        title: "Professionnel(le)",
-        created_at: "2023-01-13T13:32:36.942Z",
-        updated_at: "2023-01-13T13:32:41.917Z",
-        deleted_at: null,
-        type_parameter: {
-          id: 4,
-          slug: "type_user",
-          title: "Type d'utilisateur",
-          created_at: "2023-01-13T12:29:22.086Z",
-          updated_at: "2023-01-16T11:01:49.582Z",
-          deleted_at: null,
-        },
-        active: false,
-      },
-      {
-        id: 2002,
-        title: "Etudiant(e)",
-        created_at: "2023-01-13T13:32:36.942Z",
-        updated_at: "2023-01-13T13:32:41.917Z",
-        deleted_at: null,
-        type_parameter: {
-          id: 4,
-          slug: "type_user",
-          title: "Type d'utilisateur",
-          created_at: "2023-01-13T12:29:22.086Z",
-          updated_at: "2023-01-16T11:01:49.582Z",
-          deleted_at: null,
-        },
-        active: false,
-      },
-      {
-        id: 2003,
-        title: "Commerçant(e)",
-        created_at: "2023-01-13T13:32:36.942Z",
-        updated_at: "2023-01-13T13:32:41.917Z",
-        deleted_at: null,
-        type_parameter: {
-          id: 4,
-          slug: "type_user",
-          title: "Type d'utilisateur",
-          created_at: "2023-01-13T12:29:22.086Z",
-          updated_at: "2023-01-16T11:01:49.582Z",
-          deleted_at: null,
-        },
-        active: false,
-      },
-    ]);
+onMounted(async () => {
+  await getAllParameter()
+  userType()
+})
 
-    const Base_funPreferenceData = (
-      value: any,
-      preferenceData: any,
-      inSotre: any
-    ) => {
-      const isValue = parseInt(value);
-
-      if (preferenceData.value.includes(isValue)) {
-        preferenceData.value = preferenceData.value.filter((el: any) => {
-          return el !== isValue;
-        });
-      } else {
-        preferenceData.value.push(isValue);
-      }
-      inSotre();
-    };
-
-    const preferenceData_typeUser: any = ref([]);
-    const funPreferenceData_typeUser = (e: any) => {
-      const isValue = parseInt(e.target.value);
-
-      if (preferenceData_typeUser.value.length === 0) {
-        preferenceData_typeUser.value.push(isValue);
-      } else {
-        preferenceData_typeUser.value.splice(
-          0,
-          preferenceData_typeUser.value.length
-        );
-        preferenceData_typeUser.value.push(isValue);
-      }
-
-      useProfileStore().preferenceData_typeUser = preferenceData_typeUser.value;
-    };
-
-    const preferenceData_fieldActivity: any = ref([]);
-    const funPreferenceData_fieldActivity = (e: any) => {
-      Base_funPreferenceData(
-        e.target.value,
-        preferenceData_fieldActivity,
-        () => {
-          useProfileStore().preferenceData_fieldActivity =
-            preferenceData_fieldActivity;
-        }
-      );
-    };
-
-    const preferenceData_centerInteret: any = ref([]);
-    const funPreferenceData_centerInteret = (e: any) => {
-      Base_funPreferenceData(
-        e.target.value,
-        preferenceData_centerInteret,
-        () => {
-          useProfileStore().preferenceData_centerInteret =
-            preferenceData_centerInteret;
-        }
-      );
-    };
-
-    const preferenceData_carrier: any = ref([]);
-    const funPreferenceData_carrier = (e: any) => {
-      Base_funPreferenceData(e.target.value, preferenceData_carrier, () => {
-        useProfileStore().preferenceData_carrier = preferenceData_carrier;
-      });
-    };
-
-    return {
-      preferenceData,
-      userType,
-      __userType,
-      checkedNames,
-
-      preferenceData_typeUser,
-      funPreferenceData_typeUser,
-      preferenceData_fieldActivity,
-      funPreferenceData_fieldActivity,
-      preferenceData_centerInteret,
-      funPreferenceData_centerInteret,
-      preferenceData_carrier,
-      funPreferenceData_carrier,
-
-      MORE_USER,
-    };
+const MORE_USER = reactive([
+  {
+    id: 2001,
+    title: 'Professionnel(le)',
+    created_at: '2023-01-13T13:32:36.942Z',
+    updated_at: '2023-01-13T13:32:41.917Z',
+    deleted_at: null,
+    type_parameter: {
+      id: 4,
+      slug: 'type_user',
+      title: "Type d'utilisateur",
+      created_at: '2023-01-13T12:29:22.086Z',
+      updated_at: '2023-01-16T11:01:49.582Z',
+      deleted_at: null,
+    },
+    active: false,
   },
-});
+  {
+    id: 2002,
+    title: 'Etudiant(e)',
+    created_at: '2023-01-13T13:32:36.942Z',
+    updated_at: '2023-01-13T13:32:41.917Z',
+    deleted_at: null,
+    type_parameter: {
+      id: 4,
+      slug: 'type_user',
+      title: "Type d'utilisateur",
+      created_at: '2023-01-13T12:29:22.086Z',
+      updated_at: '2023-01-16T11:01:49.582Z',
+      deleted_at: null,
+    },
+    active: false,
+  },
+  {
+    id: 2003,
+    title: 'Commerçant(e)',
+    created_at: '2023-01-13T13:32:36.942Z',
+    updated_at: '2023-01-13T13:32:41.917Z',
+    deleted_at: null,
+    type_parameter: {
+      id: 4,
+      slug: 'type_user',
+      title: "Type d'utilisateur",
+      created_at: '2023-01-13T12:29:22.086Z',
+      updated_at: '2023-01-16T11:01:49.582Z',
+      deleted_at: null,
+    },
+    active: false,
+  },
+])
+
+const Base_funPreferenceData = (value: any, preferenceData: any, inSotre: any) => {
+  const isValue = parseInt(value)
+
+  if (preferenceData.value.includes(isValue)) {
+    preferenceData.value = preferenceData.value.filter((el: any) => {
+      return el !== isValue
+    })
+  } else {
+    preferenceData.value.push(isValue)
+  }
+  inSotre()
+}
+
+const preferenceData_typeUser: any = ref([])
+const funPreferenceData_typeUser = (e: any) => {
+  const isValue = parseInt(e.target.value)
+
+  if (preferenceData_typeUser.value.length === 0) {
+    preferenceData_typeUser.value.push(isValue)
+  } else {
+    preferenceData_typeUser.value.splice(0, preferenceData_typeUser.value.length)
+    preferenceData_typeUser.value.push(isValue)
+  }
+
+  useProfileStore().preferenceData_typeUser = preferenceData_typeUser.value
+}
+
+const preferenceData_fieldActivity: any = ref([])
+const funPreferenceData_fieldActivity = (e: any) => {
+  Base_funPreferenceData(e.target.value, preferenceData_fieldActivity, () => {
+    useProfileStore().preferenceData_fieldActivity = preferenceData_fieldActivity
+  })
+}
+
+const preferenceData_centerInteret: any = ref([])
+const funPreferenceData_centerInteret = (e: any) => {
+  Base_funPreferenceData(e.target.value, preferenceData_centerInteret, () => {
+    useProfileStore().preferenceData_centerInteret = preferenceData_centerInteret
+  })
+}
+
+const preferenceData_carrier: any = ref([])
+const funPreferenceData_carrier = (e: any) => {
+  Base_funPreferenceData(e.target.value, preferenceData_carrier, () => {
+    useProfileStore().preferenceData_carrier = preferenceData_carrier
+  })
+}
 </script>
 
 <style scoped></style>

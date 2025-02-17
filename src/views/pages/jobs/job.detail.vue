@@ -13,13 +13,11 @@
         <div class="lg:w-8/12 bg-white font-love rounded-lg">
           <div class="flex flex-col gap-8 pb-16 w-full h-full" v-if="!loading">
             <div
-              class="flex flex-col px-4 lg:px-8 py-4 bg-gray-700 text-white lg:rounded-t-md  border-b-[1px]"
+              class="flex flex-col px-4 lg:px-8 py-4 bg-gray-700 text-white lg:rounded-t-md border-b-[1px]"
             >
               <!-- User poster -->
               <div class="flex flex-col">
-                <span
-                  class="text-2xl font-black uppercase w-full lg:w-10/12 font-love"
-                >
+                <span class="text-2xl font-black uppercase w-full lg:w-10/12 font-love">
                   {{ JobOne.title }}
                 </span>
               </div>
@@ -28,9 +26,7 @@
                 <div class="flex items-center text-lg">
                   <span class="flex items-center gap-1 font-bold">
                     <MapPinIcon class="h-5"></MapPinIcon>
-                    {{ JobOne.country }}, {{ JobOne.city }} ({{
-                      JobOne.work_place.title
-                    }})
+                    {{ JobOne.country }}, {{ JobOne.city }} ({{ JobOne.work_place.title }})
                   </span>
                 </div>
 
@@ -68,9 +64,8 @@
                 <div class="flex flex-wrap text-base">
                   Delai : {{ JobOne.dead_line_format }} &#11037;
                   <span class="flex gap-1 items-center"
-                    ><CalendarIcon class="h-5"></CalendarIcon>
-                    {{ countApply }} candidat{{
-                      countApply > 1 ? "s" : ""
+                    ><CalendarIcon class="h-5"></CalendarIcon> {{ countApply }} candidat{{
+                      countApply > 1 ? 's' : ''
                     }}</span
                   >
                 </div>
@@ -83,14 +78,14 @@
                   @click="
                     USER?.id
                       ? applyCreate(JobOne.id)
-                      : $router.push(`/auth/sign-in/redirect=${$route.path}`)
+                      : router.push(`/auth/sign-in/redirect=${route.path}`)
                   "
                   :label="
                     stateApply.apply_loading
                       ? 'En cours...'
                       : stateApply.is
-                      ? 'Candidature envoyée'
-                      : 'Postuler'
+                        ? 'Candidature envoyée'
+                        : 'Postuler'
                   "
                   :disabled="stateApply.is || stateApply.apply_loading"
                   :classe-name="
@@ -99,9 +94,7 @@
                       : ' bg-gray-300 px-4 py-2 text-base'
                   "
                 />
-                <RouterLink
-                  :to="`/${JobOne?.user?.profile?.slug}?content_page=djmail`"
-                >
+                <RouterLink :to="`/${JobOne?.user?.profile?.slug}?content_page=djmail`">
                   <BtnSimple
                     v-if="USER?.id === JobOne?.user?.id"
                     label="Voir les condidactures"
@@ -109,10 +102,7 @@
                   />
                 </RouterLink>
                 <div class="hidden" @click="qModalToTag()">
-                  <BtnSimple
-                    label="Tag un(e) ami(e)"
-                    classe-name="px-4 py-2 text-base"
-                  />
+                  <BtnSimple label="Tag un(e) ami(e)" classe-name="px-4 py-2 text-base" />
                 </div>
 
                 <div
@@ -120,9 +110,7 @@
                   class="flex bg-gray-50/20 items-center gap-4 divide-x-[1px] p-4 hidden rounded-full"
                 >
                   <RouterLink :to="'/jobs/edit/' + JobOne.slug"
-                    ><PencilIcon
-                      class="h-5 text-blue-500 cursor-pointer"
-                    ></PencilIcon
+                    ><PencilIcon class="h-5 text-blue-500 cursor-pointer"></PencilIcon
                   ></RouterLink>
                   <TrashIcon
                     @click="deleteJob({ id: JobOne?.id })"
@@ -208,13 +196,7 @@
                       class="flex items-center justify-end gap-1 w-full lg:w-4/12"
                       v-if="USER?.id !== JobOne?.user?.id"
                     >
-                    <BtnFollow
-        :label="'Suivre'"
-        classe-name="w-full p-2"
-        :data="JobOne"
-      />
-
-                     
+                      <BtnFollow :label="'Suivre'" classe-name="w-full p-2" :data="JobOne" />
                     </div>
                   </div>
                 </div>
@@ -235,11 +217,7 @@
             <div v-for="(intg, index) in JobsInterestingData" v-else>
               <CardPostSimple
                 :data="intg"
-                :class="
-                  index === JobsInterestingData.length - 1
-                    ? ''
-                    : 'border-b-[1px]'
-                "
+                :class="index === JobsInterestingData.length - 1 ? '' : 'border-b-[1px]'"
               />
             </div>
           </CardMedia>
@@ -251,95 +229,61 @@
   <ModalTagFriend />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { defineComponent, ref, onBeforeMount, onMounted, reactive, defineAsyncComponent } from 'vue'
+import HomeLayout from '@/layouts/HomeLayout.vue'
+const navigationHeader = defineAsyncComponent(() => import('@/navigations/navigationHeader.vue'))
+const BtnSimple = defineAsyncComponent(() => import('@/components/buttons/btn.simple.vue'))
+const BtnFollow = defineAsyncComponent(() => import('@/components/buttons/btn.follow.vue'))
+const BtnDjoumer = defineAsyncComponent(() => import('@/components/buttons/btn.djoumer.vue'))
+import CardPostSimple from '@/components/cards/card.post.simple.vue'
+const CardMedia = defineAsyncComponent(() => import('@/components/cards/medias/card.media.vue'))
+import { JobService } from '@/services/job.services'
+import { useRoute, useRouter } from 'vue-router'
+import { useJobComposition } from './job.compositoin'
+import LoadingSimpleCard from '@/components/cards/loading/loading.simple.card.vue'
+import LoadingPostDetail from '@/components/cards/loading/loading.post.detail.vue'
+import ModalTagFriend from '@/components/modals/modal.tag.friend.vue'
+import { useJobStore } from '@/stores/jobs'
+import { URL } from '@/router/url'
+import axios from 'axios'
+import { useApplyComposition } from '@/composables/apply.composition'
+import { LocalSotreUtils } from '@/vendors/utils/localStore.utils'
+import { CryptUtils } from '@/vendors/utils/crypt.utils'
+import { UserService } from '@/services/user.services'
+import { useUserComposition } from '@/composables/user.composition'
+import EditCompoment from '@/components/edit/edit.compoment.vue'
+const SideLayout = defineAsyncComponent(() => import('@/layouts/SideLayout.vue'))
+import FollowAndDjoumer from '@/components/follow/followAndDjoumer.vue'
+import IframeDesc from '@/views/pages/jobs/created/iframeDesc.vue'
+import { useCerleComposition } from '@/composables/cerle.composition'
 import {
-  defineComponent,
-  ref,
-  onBeforeMount,
-  onMounted,
-  reactive,
-  defineAsyncComponent,
-} from "vue";
-import HomeLayout from "@/layouts/HomeLayout.vue";
-const navigationHeader = defineAsyncComponent(
-  () => import("@/navigations/navigationHeader.vue")
-);
-const BtnSimple = defineAsyncComponent(
-  () => import("@/components/buttons/btn.simple.vue")
-);
-const BtnFollow = defineAsyncComponent(
-  () => import("@/components/buttons/btn.follow.vue")
-);
-const BtnDjoumer = defineAsyncComponent(
-  () => import("@/components/buttons/btn.djoumer.vue")
-);
-import CardPostSimple from "@/components/cards/card.post.simple.vue";
-const CardMedia = defineAsyncComponent(
-  () => import("@/components/cards/medias/card.media.vue")
-);
-import { JobService } from "@/services/job.services";
-import { useRoute } from "vue-router";
-import { useJobComposition } from "./job.compositoin";
-import LoadingSimpleCard from "@/components/cards/loading/loading.simple.card.vue";
-import LoadingPostDetail from "@/components/cards/loading/loading.post.detail.vue";
-import ModalTagFriend from "@/components/modals/modal.tag.friend.vue";
-import { useJobStore } from "@/stores/jobs";
-import { URL } from "@/router/url";
-import axios from "axios";
-import { useApplyComposition } from "@/composables/apply.composition";
-import { LocalSotreUtils } from "@/vendors/utils/localStore.utils";
-import { CryptUtils } from "@/vendors/utils/crypt.utils";
-import { UserService } from "@/services/user.services";
-import { useUserComposition } from "@/composables/user.composition";
-import EditCompoment from "@/components/edit/edit.compoment.vue";
-const SideLayout = defineAsyncComponent(
-  () => import("@/layouts/SideLayout.vue")
-);
-import FollowAndDjoumer from "@/components/follow/followAndDjoumer.vue";
-import IframeDesc from "@/views/pages/jobs/created/iframeDesc.vue";
-import { useCerleComposition } from "@/composables/cerle.composition";
-import { BoltIcon, BriefcaseIcon, CalendarIcon, MapPinIcon, PencilIcon } from "@heroicons/vue/24/solid";
+  BoltIcon,
+  BriefcaseIcon,
+  CalendarIcon,
+  MapPinIcon,
+  PencilIcon,
+} from '@heroicons/vue/24/solid'
 
-export default defineComponent({
-  name: "job-detail",
-  components: {
-    HomeLayout,
-    navigationHeader,
-    BtnSimple,
-    CardPostSimple,
-    CardMedia,
-    BtnFollow,
-    BtnDjoumer,
-    LoadingSimpleCard,
-    LoadingPostDetail,
-    ModalTagFriend,
-    EditCompoment,
-    SideLayout,
-    FollowAndDjoumer,
-    IframeDesc,
-    MapPinIcon,
-    BriefcaseIcon,
-    BoltIcon,
-    CalendarIcon,
-    PencilIcon
-},
-  props: [],
+const JobDetail: any = ref({
+  field_activity: {},
+  localization: { country: {}, city: {} },
+  work_place: {},
+  contract_type: {},
+})
 
-  setup(props, {}) {
-    const JobDetail: any = ref({
-      field_activity: {},
-      localization: { country: {}, city: {} },
-      work_place: {},
-      contract_type: {},
-    });
+const props = defineProps(['JobOne', 'JobOneProfile'])
 
-    const { abonneCount, FOLLOWCount } = useCerleComposition();
+const route = useRoute()
+const router = useRouter()
 
-    const JobDetailProfile: any = ref({});
-    const JobsInterestingData = ref();
-    const loading = ref(false);
-    const css = ref(
-      `
+const { abonneCount, FOLLOWCount } = useCerleComposition()
+
+const JobDetailProfile: any = ref({})
+const JobsInterestingData = ref()
+const loading = ref(false)
+const css = ref(
+  `
       @import url('https://fonts.googleapis.com/css?family=Cabin:100,200,300,400,500,600,700,800&display=swap');
       body {
   background-color: white;
@@ -354,65 +298,44 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
 }
  
-`
-    );
+`,
+)
 
-    const iframeRef: any = ref();
+const iframeRef: any = ref()
 
-    const { applyCreate, applyShow, stateApply, countApply } =
-      useApplyComposition();
-    const { USER, GET_USER } = useUserComposition();
+const { applyCreate, applyShow, stateApply, countApply } = useApplyComposition()
+const { USER, GET_USER } = useUserComposition()
 
-    onMounted(async () => {
-      Job__findone().then(() => {
-        applyShow(JobDetail.value.id);
-        FOLLOWCount(JobDetailProfile.value.id);
-      });
+onMounted(async () => {
+  Job__findone().then(() => {
+    applyShow(JobDetail.value.id)
+    FOLLOWCount(JobDetailProfile.value.id)
+  })
 
-      await GET_USER();
-    });
+  await GET_USER()
+})
 
-    // Get specify job
-    const Job__findone = async () => {
-      loading.value = true;
-      const route = useRoute();
-      const { JobOne, profile, JobsInteresting, e } =
-        await new JobService().findOne(route.params?.slug);
+// Get specify job
+const Job__findone = async () => {
+  loading.value = true
+  const route = useRoute()
+  const { JobOne, profile, JobsInteresting, e } = await new JobService().findOne(route.params?.slug)
 
-      if (JobOne && profile) {
-        JobDetail.value = JobOne;
-        JobDetailProfile.value = profile;
-        JobsInterestingData.value = JobsInteresting;
-        console.log(JobsInterestingData.value);
+  if (JobOne && profile) {
+    JobDetail.value = JobOne
+    JobDetailProfile.value = profile
+    JobsInterestingData.value = JobsInteresting
+    console.log(JobsInterestingData.value)
 
-        loading.value = false;
-      }
-    };
+    loading.value = false
+  }
+}
 
-    const qModalToTag = () => {
-      useJobStore().openModal = true;
-    };
+const qModalToTag = () => {
+  useJobStore().openModal = true
+}
 
-    const { state, deleteJob } = useJobComposition();
-
-    return {
-      JobOne: JobDetail,
-      css,
-      JobOneProfile: JobDetailProfile,
-      state,
-      loading,
-      qModalToTag,
-      applyCreate,
-      stateApply,
-      countApply,
-      iframeRef,
-      USER,
-      deleteJob,
-      JobsInterestingData,
-      abonneCount,
-    };
-  },
-});
+const { state, deleteJob } = useJobComposition()
 </script>
 
 <style scoped>

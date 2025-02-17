@@ -2,8 +2,7 @@
   <section class="flex flex-col w-full">
     <div class="flex mb-2 px-4 md:px-16 py-4 border-b-[1px] rounded-t-md">
       <span class="text-xl text-gray-700 font-bold">
-        {{ data === "created" ? "Creation" : "Modification" }} offre
-        d'emploi</span
+        {{ data === 'created' ? 'Creation' : 'Modification' }} offre d'emploi</span
       >
     </div>
 
@@ -60,9 +59,7 @@
             <label for="id-title">Type de contract</label>
             <formSelect
               :modelValue="inputDataJob.contract_type"
-              @update:modelValue="
-                inputDataJob.contract_type = $event.target.value
-              "
+              @update:modelValue="inputDataJob.contract_type = $event.target.value"
               name="contract_type"
               :data="preferenceData(6)"
               placeholder="Le type de contrat pour le poste"
@@ -167,20 +164,14 @@
             v-if="data == 'edit'"
             @click="deleteJob({ id: inputDataJob.id })"
           >
-            {{ loading_delete ? "En cours..." : "Supprimer" }}
+            {{ loading_delete ? 'En cours...' : 'Supprimer' }}
           </button>
-          <RouterLink :to="{ name: 'Jobs' }" v-if="data == 'create'"
-            >Annuler</RouterLink
-          >
+          <RouterLink :to="{ name: 'Jobs' }" v-if="data == 'create'">Annuler</RouterLink>
         </div>
 
         <BtnSimple
           :label="
-            state.loading
-              ? 'Chargement...'
-              : data === 'created'
-              ? 'Publier l\'offre'
-              : 'Modifier'
+            state.loading ? 'Chargement...' : data === 'created' ? 'Publier l\'offre' : 'Modifier'
           "
           :disabled="state.loading"
           classe-name="px-8 py-3 text-base"
@@ -191,168 +182,107 @@
   </section>
 </template>
 
-<script lang="ts">
-const OnlyInput = defineAsyncComponent(
-  () => import("@/components/forms/onlyInput.vue")
-);
-const HomeTwoLayout = defineAsyncComponent(
-  () => import("@/layouts/HomeTwoLayout.vue")
-);
-import {
-  defineComponent,
-  onMounted,
-  ref,
-  reactive,
-  computed,
-  defineAsyncComponent,
-} from "vue";
-import Editor from "@tinymce/tinymce-vue";
-const formSelect = defineAsyncComponent(
-  () => import("@/components/forms/form.select.vue")
-);
-const formDate = defineAsyncComponent(
-  () => import("@/components/forms/form.date.vue")
-);
-const CardMedia = defineAsyncComponent(
-  () => import("@/components/cards/medias/card.media.vue")
-);
+<script setup lang="ts">
+const OnlyInput = defineAsyncComponent(() => import('@/components/forms/onlyInput.vue'))
+const HomeTwoLayout = defineAsyncComponent(() => import('@/layouts/HomeTwoLayout.vue'))
+import { defineComponent, onMounted, ref, reactive, computed, defineAsyncComponent } from 'vue'
+import Editor from '@tinymce/tinymce-vue'
+const formSelect = defineAsyncComponent(() => import('@/components/forms/form.select.vue'))
+const formDate = defineAsyncComponent(() => import('@/components/forms/form.date.vue'))
+const CardMedia = defineAsyncComponent(() => import('@/components/cards/medias/card.media.vue'))
 const CardPostProfile = defineAsyncComponent(
-  () => import("@/components/cards/card.post.profile.vue")
-);
-import { usePreferenceComposition } from "@/composables/preference.composition";
-import { JobService } from "@/services/job.services";
-import moment from "moment";
-const BtnNext = defineAsyncComponent(
-  () => import("@/components/buttons/btn.next.vue")
-);
-const BtnSimple = defineAsyncComponent(
-  () => import("@/components/buttons/btn.simple.vue")
-);
-import VueSelect from "vue-select";
-import axios from "axios";
-import { useJobComposition } from "../job.compositoin";
-import { useRoute } from "vue-router";
+  () => import('@/components/cards/card.post.profile.vue'),
+)
+import { usePreferenceComposition } from '@/composables/preference.composition'
+import { JobService } from '@/services/job.services'
+import moment from 'moment'
+const BtnNext = defineAsyncComponent(() => import('@/components/buttons/btn.next.vue'))
+const BtnSimple = defineAsyncComponent(() => import('@/components/buttons/btn.simple.vue'))
+import VueSelect from 'vue-select'
+import axios from 'axios'
+import { useJobComposition } from '../job.compositoin'
+import { useRoute } from 'vue-router'
 
-let self: any;
-export default defineComponent({
-  name: "Index-job-created",
-  components: {
-    HomeTwoLayout,
-    OnlyInput,
-    editor: Editor,
-    formSelect,
-    formDate,
-    CardMedia,
-    CardPostProfile,
-    BtnNext,
-    BtnSimple,
-    VueSelect,
-  },
-  props: ["data", "slug"],
-  created() {
-    self = this;
-  },
+const props = defineProps(['data', 'slug'])
+const address = ref('')
+const JobDetail: any = ref()
+const route = useRoute()
 
-  setup(props) {
-    const address = ref("");
-    const JobDetail: any = ref();
-    const route = useRoute();
+const {
+  inputDataJob,
+  createNewJob,
+  isError,
+  state,
+  localizaton,
+  loading_delete,
+  localizatonCity,
+  deleteJob,
+  updateJob,
+  Places,
+} = useJobComposition()
+const { preferenceData, getAllParameter } = usePreferenceComposition()
 
-    const {
-      inputDataJob,
-      createNewJob,
-      isError,
-      state,
-      localizaton,
-      loading_delete,
-      localizatonCity,
-      deleteJob,
-      updateJob,
-      Places,
-    } = useJobComposition();
-    const { preferenceData, getAllParameter } = usePreferenceComposition();
+//
+onMounted(async () => {
+  inputDataJob.description = ``
+  await getAllParameter()
+  await localizaton()
+  console.log(props.data)
+  if (props.data === 'edit') {
+    await Job__findone()
+  }
+})
 
-    //
-    onMounted(async () => {
-      inputDataJob.description = ``;
-      await getAllParameter();
-      await localizaton();
-      console.log(props.data);
-      if (props.data === "edit") {
-        await Job__findone();
-      }
-    });
+// Get specify job
+const Job__findone = async () => {
+  const { JobOne, profile, e } = await new JobService().findOne(route.params?.slug)
 
-    // Get specify job
-    const Job__findone = async () => {
-      const { JobOne, profile, e } = await new JobService().findOne(
-        route.params?.slug
-      );
+  if (JobOne) {
+    JobDetail.value = JobOne
+    inputDataJob.id = JobOne?.id
+    inputDataJob.title = JobOne?.title
+    inputDataJob.field_activity = JobOne?.field_activity?.title.toString()
+    inputDataJob.contract_type = JobOne?.contract_type?.id.toString()
+    inputDataJob.work_place = JobOne?.work_place?.id.toString()
+    const getCountry: any = Places.country.find((el: any) => {
+      return el.name === JobOne?.country
+    })
+    const getCitie: any = Places.city.find((el: any) => {
+      return el.name === JobOne?.city
+    })
+    inputDataJob.dead_line = new Date(JobOne?.dead_line).toISOString()
+    inputDataJob.localizaton_country = getCountry
+    inputDataJob.localizaton_city = getCitie
+    inputDataJob.description = JobOne?.description
+  }
+}
 
-      if (JobOne) {
-        JobDetail.value = JobOne;
-        inputDataJob.id = JobOne?.id;
-        inputDataJob.title = JobOne?.title;
-        inputDataJob.field_activity = JobOne?.field_activity?.title.toString();
-        inputDataJob.contract_type = JobOne?.contract_type?.id.toString();
-        inputDataJob.work_place = JobOne?.work_place?.id.toString();
-        const getCountry: any = Places.country.find((el: any) => {
-          return el.name === JobOne?.country;
-        });
-        const getCitie: any = Places.city.find((el: any) => {
-          return el.name === JobOne?.city;
-        });
-        inputDataJob.dead_line = new Date(JobOne?.dead_line).toISOString();
-        inputDataJob.localizaton_country = getCountry;
-        inputDataJob.localizaton_city = getCitie;
-        inputDataJob.description = JobOne?.description;
-      }
-    };
-
-    // initilization area
-    const initilization = () => {
-      return {
-        height: 500,
-        menubar: false,
-        plugins: [
-          "advlist",
-          "autolink",
-          "lists",
-          "link",
-          "image",
-          "charmap",
-          "preview",
-          "anchor",
-          "searchreplace",
-          "visualblocks",
-          "fullscreen",
-          "insertdatetime",
-          "media",
-          "table",
-          "help",
-          "wordcount",
-        ],
-        toolbar: " casechange blocks | bold italic bullist  ",
-      };
-    };
-
-    return {
-      state,
-      preferenceData,
-      createNewJob,
-      inputDataJob,
-      isError,
-      initilization,
-      address,
-      Places,
-      localizatonCity,
-      loading_delete,
-      JobDetail,
-      updateJob,
-      deleteJob,
-    };
-  },
-});
+// initilization area
+const initilization = () => {
+  return {
+    height: 500,
+    menubar: false,
+    plugins: [
+      'advlist',
+      'autolink',
+      'lists',
+      'link',
+      'image',
+      'charmap',
+      'preview',
+      'anchor',
+      'searchreplace',
+      'visualblocks',
+      'fullscreen',
+      'insertdatetime',
+      'media',
+      'table',
+      'help',
+      'wordcount',
+    ],
+    toolbar: ' casechange blocks | bold italic bullist  ',
+  }
+}
 </script>
 
 <style></style>

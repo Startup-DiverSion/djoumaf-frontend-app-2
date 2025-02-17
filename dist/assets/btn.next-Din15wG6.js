@@ -1,0 +1,1 @@
+import{d as t,f as e,h as n,l as o}from"./index-D5ohQRTx.js";const s=t({name:"btn-next",props:[],setup(){return{}}}),r={type:"submit",class:"text-blue-500 font-bold font-love"};function a(c,p,u,_,f,l){return n(),o("button",r,"Suivant →")}const i=e(s,[["render",a]]);export{i as default};

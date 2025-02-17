@@ -19,31 +19,29 @@
             <!--  -->
             <div class="grid grid-cols-2 gap-4 w-full">
               <div class="flex flex-col w-full">
-                <label class="text-sm font-light" for="id-title"
-                  >Domaine d'activité
-                </label>
+                <label class="text-sm font-light" for="id-title">Domaine d'activité </label>
                 <VueSelect
-              class="font-love text-base"
-              v-model="inputDataJob.field_activity"
-              :options="preferenceData(1)"
-              name="field_activity"
-              label="title"
-              placeholder="Choisir un domaine d'activité"
-              
-            />
-    <span class="text-xs font-bold font-love text-red-500 mt-1 mx-1" v-if="isError.path === 'field_activity'"> {{ isError.message }} </span>
-
+                  class="font-love text-base"
+                  v-model="inputDataJob.field_activity"
+                  :options="preferenceData(1)"
+                  name="field_activity"
+                  label="title"
+                  placeholder="Choisir un domaine d'activité"
+                />
+                <span
+                  class="text-xs font-bold font-love text-red-500 mt-1 mx-1"
+                  v-if="isError.path === 'field_activity'"
+                >
+                  {{ isError.message }}
+                </span>
               </div>
 
               <div class="flex flex-col">
                 <label class="text-sm font-light" for="id-title">Lieu de travail </label>
 
-                
                 <formSelect
                   :modelValue="inputDataJob.work_place"
-                  @update:modelValue="
-                    inputDataJob.work_place = $event.target.value
-                  "
+                  @update:modelValue="inputDataJob.work_place = $event.target.value"
                   name="work_place"
                   :data="preferenceData(5)"
                   placeholder="Quel est le lieu de travail"
@@ -57,9 +55,7 @@
                 <label class="text-sm font-light" for="id-title">Type de contract</label>
                 <formSelect
                   :modelValue="inputDataJob.contract_type"
-                  @update:modelValue="
-                    inputDataJob.contract_type = $event.target.value
-                  "
+                  @update:modelValue="inputDataJob.contract_type = $event.target.value"
                   name="contract_type"
                   :data="preferenceData(6)"
                   placeholder="Le type de contrat pour le poste"
@@ -72,9 +68,7 @@
                 <formDate
                   name="dead_line"
                   :model-value="inputDataJob.dead_line"
-                  @update:modelValue="
-                    inputDataJob.dead_line = $event.target.value
-                  "
+                  @update:modelValue="inputDataJob.dead_line = $event.target.value"
                   :error-input="isError"
                 />
               </div>
@@ -128,19 +122,21 @@
                 placeholder="Pour rendre votre offre d'emploi plus informatif, il pourrait être judicieux de mettre à jour votre description."
                 rows="5"
               ></textarea>
-          <span class="text-sm font-love text-red-500 mt-1 mx-1" v-if="isError.path === 'description'"> {{ isError.message }} </span>
-
+              <span
+                class="text-sm font-love text-red-500 mt-1 mx-1"
+                v-if="isError.path === 'description'"
+              >
+                {{ isError.message }}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       <!--  -->
-     
     </div>
 
     <template #footer>
-
       <div class="w-full flex flex-col py-3">
         <div class="flex items-center justify-between w-11/12 m-auto">
           <RouterLink
@@ -159,66 +155,32 @@
           </div>
         </div>
       </div>
-      </template>
+    </template>
   </ModalLayout>
 </template>
 
-<script lang="ts">
-import ModalLayout from "@/layouts/ModalLayout.vue";
-import { defineComponent, onMounted, defineAsyncComponent } from "vue";
-import OnlyForm from "../forms/onlyInput.vue";
-import formDate from "../forms/form.date.vue";
-import formSelect from "../forms/form.select.vue";
-import BtnSimple from "../buttons/btn.simple.vue";
-import { usePreferenceComposition} from "@/composables/preference.composition";
-import { useJobComposition} from "@/views/pages/jobs/job.compositoin";
-import VueSelect from "vue-select";
+<script setup lang="ts">
+import ModalLayout from '@/layouts/ModalLayout.vue'
+import { defineComponent, onMounted, defineAsyncComponent } from 'vue'
+import OnlyForm from '../forms/onlyInput.vue'
+import formDate from '../forms/form.date.vue'
+import formSelect from '../forms/form.select.vue'
+import BtnSimple from '../buttons/btn.simple.vue'
+import { usePreferenceComposition } from '@/composables/preference.composition'
+import { useJobComposition } from '@/views/pages/jobs/job.compositoin'
+import VueSelect from 'vue-select'
 
+let self: any
 
-let self:any;
-export default defineComponent({
-  name: "modal-job",
-  props: [],
-  components: {
-    ModalLayout,
-    OnlyForm,
-    formSelect,
-    formDate,
-    BtnSimple,
-    VueSelect,
-  },
-  created(){
-    self = this
-  },
-  setup(props, {}) {
-    //
-    onMounted(async () => {
-      await getAllParameter();
-      await localizaton();
-    });
+//
+onMounted(async () => {
+  await getAllParameter()
+  await localizaton()
+})
 
-    const {
-      inputDataJob,
-      isError,
-      createNewJob,
-      state,
-      localizaton,
-      localizatonCity,
-      Places,
-    } = useJobComposition();
-    const { preferenceData, getAllParameter } = usePreferenceComposition();
-
-    return {
-      preferenceData,
-      inputDataJob,
-      isError,
-      createNewJob,
-      state,
-      Places,
-      localizatonCity,
-    };
-  },
-});
+const { inputDataJob, isError, createNewJob, state, localizaton, localizatonCity, Places } =
+  useJobComposition()
+const { preferenceData, getAllParameter } = usePreferenceComposition()
 </script>
 
 <style scoped></style>

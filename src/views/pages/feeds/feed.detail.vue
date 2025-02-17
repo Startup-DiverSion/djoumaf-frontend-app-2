@@ -5,7 +5,7 @@
       <div class="bg-gray-700/90 w-full py-3 z-40">
         <div class="text-white w-11/12 m-auto flex justify-between items-center">
           <ArrowLeftIcon
-            @click="hideBody($router)"
+            @click="hideBody(router)"
             class="fi fi-rr-arrow-small-left cursor-pointer p-1 h-6 font-black"
           ></ArrowLeftIcon>
 
@@ -56,15 +56,16 @@
   </main>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import Pagination from 'swiper'
+import { Pagination } from 'swiper/modules'
 import { URL } from '@/router/url'
 import axios from 'axios'
 import { defineComponent, onMounted, computed, ref, defineAsyncComponent, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 
+const router = useRoute()
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -86,79 +87,51 @@ import {
   ArrowLeftIcon,
 } from '@heroicons/vue/24/solid'
 
-export default defineComponent({
-  name: 'feed-details',
-  props: ['USER'],
-  components: {
-    Swiper,
-    SwiperSlide,
-    FeedCardActions,
-    TextQuery,
-    FeedCardContent,
-    FeedCardCommentsPeople,
-    LoadingSpiner,
-    FeedCardProfile,
-    FeedDetailSideContent,
-    ChevronDoubleRightIcon,
-    ArrowSmallLeftIcon,
-    ChevronDoubleLeftIcon,
-    ArrowLeftIcon,
-  },
-  setup() {
-    const isHide = ref(false)
-    const route = useRoute()
+const props = defineProps(['post', 'USER'])
 
-    onMounted(() => {
-      postShow(route.params.slug)
-      HideSideInfo(false)
-      document.querySelector('body')?.classList.add('overflow-y-hidden')
-    })
+const isHide = ref(false)
+const route = useRoute()
 
-    const HideSideInfo = (isHide_bool: any) => {
-      const SideLg = document.querySelector('.SideLg')
-      const otherSide = document.querySelector('.otherSide')
-      if (isHide_bool) {
-        otherSide?.classList.remove('lg:w-9/12')
-        otherSide?.classList.add('lg:w-full')
-
-        SideLg?.classList.remove('flex')
-        SideLg?.classList.add('hidden')
-
-        SideLg?.classList.remove('lg:flex')
-        SideLg?.classList.add('lg:hidden')
-        isHide.value = false
-      } else {
-        otherSide?.classList.add('lg:w-9/12')
-        otherSide?.classList.remove('lg:w-full')
-
-        SideLg?.classList.remove('lg:hidden')
-        SideLg?.classList.add('lg:flex')
-
-        SideLg?.classList.remove('hidden')
-        SideLg?.classList.add('flex')
-        isHide.value = true
-      }
-    }
-
-    const hideBody = (_router: any) => {
-      _router.replace('/feeds')
-      document.querySelector('body')?.classList.remove('overflow-y-hidden')
-    }
-
-    const { postShow, loading_show, post } = useFeedComposition()
-
-    return {
-      post,
-      envConfig,
-      hideBody,
-      loading_show,
-      postShow,
-      HideSideInfo,
-      isHide,
-      modules: [Pagination],
-    }
-  },
+onMounted(() => {
+  postShow(route.params.slug)
+  HideSideInfo(false)
+  document.querySelector('body')?.classList.add('overflow-y-hidden')
 })
+
+const HideSideInfo = (isHide_bool: any) => {
+  const SideLg = document.querySelector('.SideLg')
+  const otherSide = document.querySelector('.otherSide')
+  if (isHide_bool) {
+    otherSide?.classList.remove('lg:w-9/12')
+    otherSide?.classList.add('lg:w-full')
+
+    SideLg?.classList.remove('flex')
+    SideLg?.classList.add('hidden')
+
+    SideLg?.classList.remove('lg:flex')
+    SideLg?.classList.add('lg:hidden')
+    isHide.value = false
+  } else {
+    otherSide?.classList.add('lg:w-9/12')
+    otherSide?.classList.remove('lg:w-full')
+
+    SideLg?.classList.remove('lg:hidden')
+    SideLg?.classList.add('lg:flex')
+
+    SideLg?.classList.remove('hidden')
+    SideLg?.classList.add('flex')
+    isHide.value = true
+  }
+}
+
+const hideBody = (_router: any) => {
+  _router.replace('/feeds')
+  document.querySelector('body')?.classList.remove('overflow-y-hidden')
+}
+
+const { postShow, loading_show, post } = useFeedComposition()
+
+const modules = [Pagination]
 </script>
 
 <style scoped></style>

@@ -6,9 +6,8 @@
           class="lg:grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4"
           :class="isfree ? 'hidden' : ''"
         >
-          <div v-for="(item, index) in cvData.filter((el:any) => el.premiun == !isfree)">
-           
-            <ProfileCvContentComponData :item="item" :data="data"  />
+          <div v-for="(item, index) in cvData.filter((el: any) => el.premiun == !isfree)">
+            <ProfileCvContentComponData :item="item" :data="data" />
           </div>
         </div>
 
@@ -28,55 +27,36 @@
   </div>
 </template>
 
-<script lang="ts">
-const CardBody = defineAsyncComponent(
-  () => import("@/components/cards/medias/card.body.vue")
-);
-import { envConfig } from "@/env.config";
-import { StarIcon } from "@heroicons/vue/24/solid";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper";
+<script setup lang="ts">
+const CardBody = defineAsyncComponent(() => import('@/components/cards/medias/card.body.vue'))
+import { envConfig } from '@/env.config'
+import { StarIcon } from '@heroicons/vue/24/solid'
+// import Swiper core and required modules
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
+// Import Swiper Vue.js components
+import { Swiper, SwiperSlide } from 'swiper/vue'
+
 // Import Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import {
-  defineComponent,
-  ref,
-  reactive,
-  defineAsyncComponent,
-  computed,
-onMounted,
-} from "vue";
-import ProfileCvContentComponData from "./profile.cv.content.compon.Data.vue";
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import 'swiper/css/scrollbar'
+import { defineComponent, ref, reactive, defineAsyncComponent, computed, onMounted } from 'vue'
+import ProfileCvContentComponData from './profile.cv.content.compon.Data.vue'
 
-export default defineComponent({
-  name: "profile-cv-content",
-  props: ["cvData", "data", "title", "isfree"],
-  components: {
-    CardBody,
-    StarIcon,
-    Swiper,
-    SwiperSlide,
-    ProfileCvContentComponData,
-  },
-  setup(props) {
-    const showInfoCard = ref(false);
+const props = defineProps(['cvData', 'data', 'title', 'isfree'])
 
-    onMounted(() => {
-      // props.cvData.filter((el:any) => el.premiun == !isfree)
-    })
+const showInfoCard = ref(false)
 
-    const MobileDecte = computed(() => {
-      let check = false;
-    });
+onMounted(() => {
+  // props.cvData.filter((el:any) => el.premiun == !isfree)
+})
 
-    return {
-      showInfoCard,
-      MobileDecte,
-      modules: [Navigation, Pagination],
-    };
-  },
-});
+const MobileDecte = computed(() => {
+  let check = false
+})
+
+const modules = [Navigation, Pagination]
 </script>
 
 <style scoped></style>

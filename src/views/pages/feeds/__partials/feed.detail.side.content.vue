@@ -31,7 +31,7 @@
 <script lang="ts">
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import Pagination from 'swiper'
+import { Pagination } from 'swiper/modules'
 import { URL } from '@/router/url'
 import axios from 'axios'
 import { defineComponent, onMounted, computed, ref, defineAsyncComponent, reactive } from 'vue'
